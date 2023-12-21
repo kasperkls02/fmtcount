@@ -51,7 +51,7 @@
 \newcommand*\@@unitstringdanish[1]{%
   \ifcase#1\relax
     nul%
-    \or en%
+    \or et%
     \or to%
     \or tre%
     \or fire%
@@ -106,7 +106,7 @@
 \newcommand*\@@Unitstringdanish[1]{%
   \ifcase#1\relax
     Nul%
-    \or En%
+    \or Et%
     \or To%
     \or Tre%
     \or Fire%
