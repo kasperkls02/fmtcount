@@ -1,0 +1,570 @@
+% \subsubsection{fc-danish.def}
+% Danish definitions
+%    \begin{macrocode}
+\ProvidesFCLanguage{danish}[2016/01/12]%
+%    \end{macrocode}
+% Define macro that converts a number or count register (first 
+% argument) to an ordinal, and stores the result in the 
+% second argument, which should be a control sequence.
+%    \begin{macrocode}
+\newcommand*\@ordinalMdanish[2]{%
+\def\@fc@ord{}%
+\@orgargctr=#1\relax
+\@ordinalctr=#1%
+\@FCmodulo{\@ordinalctr}{100}%
+\ifnum\@ordinalctr=11\relax
+  \def\@fc@ord{th}%
+\else
+  \ifnum\@ordinalctr=12\relax
+    \def\@fc@ord{th}%
+  \else
+    \ifnum\@ordinalctr=13\relax
+      \def\@fc@ord{th}%
+    \else
+      \@FCmodulo{\@ordinalctr}{10}%
+      \ifcase\@ordinalctr
+        \def\@fc@ord{th}%      case 0
+        \or \def\@fc@ord{st}%  case 1
+        \or \def\@fc@ord{nd}%  case 2
+        \or \def\@fc@ord{rd}%  case 3
+      \else
+        \def\@fc@ord{th}%      default case
+      \fi
+    \fi
+  \fi
+\fi
+\edef#2{\number#1\relax\noexpand\fmtord{\@fc@ord}}%
+}%
+\global\let\@ordinalMdanish\@ordinalMdanish
+%    \end{macrocode}
+% There is no gender difference in danish, so make feminine and
+% neuter the same as the masculine.
+%    \begin{macrocode}
+\global\let\@ordinalFdanish=\@ordinalMdanish
+\global\let\@ordinalNdanish=\@ordinalMdanish
+%    \end{macrocode}
+% Define the macro that prints the value of a \TeX\ count register
+% as text. To make it easier, break it up into units, teens and
+% tens. First, the units: the argument should be between 0 and 9
+% inclusive.
+%    \begin{macrocode}
+\newcommand*\@@unitstringdanish[1]{%
+  \ifcase#1\relax
+    nul%
+    \or en%
+    \or to%
+    \or tre%
+    \or fire%
+    \or fem%
+    \or seks%
+    \or syv%
+    \or otte%
+    \or ni%
+\fi
+}%
+\global\let\@@unitstringdanish\@@unitstringdanish
+%    \end{macrocode}
+% Next the tens, again the argument should be between 0 and 9
+% inclusive.
+%    \begin{macrocode}
+\newcommand*\@@tenstringdanish[1]{%
+  \ifcase#1\relax
+    \or ti%
+    \or tyve%
+    \or tredive%
+    \or fyrre%
+    \or halvtreds%
+    \or treds%
+    \or halvfjerds%
+    \or firs%
+    \or halvfems%
+  \fi
+}%
+\global\let\@@tenstringdanish\@@tenstringdanish
+%    \end{macrocode}
+% Finally the teens, again the argument should be between 0 and 9
+% inclusive.
+%    \begin{macrocode}
+\newcommand*\@@teenstringdanish[1]{%
+  \ifcase#1\relax
+    ti%
+    \or elleve%
+    \or tolv%
+    \or tretten%
+    \or fjorten%
+    \or femten%
+    \or seksten%
+    \or sytten%
+    \or atten%
+    \or nitten%
+  \fi
+}%
+\global\let\@@teenstringdanish\@@teenstringdanish
+%    \end{macrocode}
+% As above, but with the initial letter in uppercase. The units:
+%    \begin{macrocode}
+\newcommand*\@@Unitstringdanish[1]{%
+  \ifcase#1\relax
+    Nul%
+    \or En%
+    \or To%
+    \or Tre%
+    \or Fire%
+    \or Fem%
+    \or Seks%
+    \or Syv%
+    \or Otte%
+    \or Ni%
+  \fi
+}%
+\global\let\@@Unitstringdanish\@@Unitstringdanish
+%    \end{macrocode}
+% The tens:
+%    \begin{macrocode}
+\newcommand*\@@Tenstringdanish[1]{%
+  \ifcase#1\relax
+    \or Ti%
+    \or Tyve%
+    \or Tredive%
+    \or Fyrre%
+    \or Halvtreds%
+    \or Treds%
+    \or Halvfjerds%
+    \or Firs%
+    \or Halvfems%
+  \fi
+}%
+\global\let\@@Tenstringdanish\@@Tenstringdanish
+%    \end{macrocode}
+% The teens:
+%    \begin{macrocode}
+\newcommand*\@@Teenstringdanish[1]{%
+  \ifcase#1\relax
+    Ti%
+    \or Elleve%
+    \or Tolv%
+    \or Tretten%
+    \or Fjorten%
+    \or Femten%
+    \or Seksten%
+    \or Sytten%
+    \or Atten%
+    \or Nitten%
+  \fi
+}%
+\global\let\@@Teenstringdanish\@@Teenstringdanish
+%    \end{macrocode}
+% This has changed in version 1.09, so that it now stores
+% the result in the second argument, but doesn't display anything.
+% Since it only affects internal macros, it shouldn't affect
+% documents created with older versions. (These internal macros are
+% not meant for use in documents.)
+%    \begin{macrocode}
+\newcommand*\@@numberstringdanish[2]{%
+\ifnum#1>99999
+\PackageError{fmtcount}{Out of range}%
+{This macro only works for values less than 100000}%
+\else
+\ifnum#1<0
+\PackageError{fmtcount}{Negative numbers not permitted}%
+{This macro does not work for negative numbers, however
+you can try typing "minus" first, and then pass the modulus of
+this number}%
+\fi
+\fi
+\def#2{}%
+\@strctr=#1\relax \divide\@strctr by 1000\relax
+\ifnum\@strctr>9
+  \divide\@strctr by 10
+  \ifnum\@strctr>1\relax
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr\@tenstring{\@strctr}}%
+    \@strctr=#1 \divide\@strctr by 1000\relax
+    \@FCmodulo{\@strctr}{10}%
+    \ifnum\@strctr>0\relax
+      \let\@@fc@numstr#2\relax
+      \edef#2{\@@fc@numstr-\@unitstring{\@strctr}}%
+    \fi
+  \else
+    \@strctr=#1\relax
+    \divide\@strctr by 1000\relax
+    \@FCmodulo{\@strctr}{10}%
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr\@teenstring{\@strctr}}%
+  \fi
+  \let\@@fc@numstr#2\relax
+  \edef#2{\@@fc@numstr\ \@thousand}%
+\else
+  \ifnum\@strctr>0\relax
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr\@unitstring{\@strctr}\ \@thousand}%
+  \fi
+\fi
+\@strctr=#1\relax \@FCmodulo{\@strctr}{1000}%
+\divide\@strctr by 100
+\ifnum\@strctr>0\relax
+   \ifnum#1>1000\relax
+      \let\@@fc@numstr#2\relax
+      \edef#2{\@@fc@numstr\ }%
+   \fi
+   \let\@@fc@numstr#2\relax
+   \edef#2{\@@fc@numstr\@unitstring{\@strctr}\ \@hundred}%
+\fi
+\@strctr=#1\relax \@FCmodulo{\@strctr}{100}%
+\ifnum#1>100\relax
+  \ifnum\@strctr>0\relax
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr\ \@andname\ }%
+  \fi
+\fi
+\ifnum\@strctr>19\relax
+  \divide\@strctr by 10\relax
+  \let\@@fc@numstr#2\relax
+  \edef#2{\@@fc@numstr\@tenstring{\@strctr}}%
+  \@strctr=#1\relax \@FCmodulo{\@strctr}{10}%
+  \ifnum\@strctr>0\relax
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr-\@unitstring{\@strctr}}%
+  \fi
+\else
+  \ifnum\@strctr<10\relax
+    \ifnum\@strctr=0\relax
+       \ifnum#1<100\relax
+          \let\@@fc@numstr#2\relax
+          \edef#2{\@@fc@numstr\@unitstring{\@strctr}}%
+       \fi
+    \else
+      \let\@@fc@numstr#2\relax
+      \edef#2{\@@fc@numstr\@unitstring{\@strctr}}%
+    \fi
+  \else
+    \@FCmodulo{\@strctr}{10}%
+    \let\@@fc@numstr#2\relax
+    \edef#2{\@@fc@numstr\@teenstring{\@strctr}}%
+  \fi
+\fi
+}%
+\global\let\@@numberstringdanish\@@numberstringdanish
+%    \end{macrocode}
+% All lower case version, the second argument must be a control
+% sequence.%
+% \changes{3.02}{2016/01/12}{Replace \cs{DeclareRobustCommand} by
+% \cs{newcommand*} as robustness is handled now at top level in
+% \texttt{fmtcount.sty}, and we don't need \cs{long} macros. Concerned
+% macros are \cs{@numberstringMdanish}, \cs{@ordinalstringMdanish},
+% and \cs{@OrdinalstringMdanish}}
+%    \begin{macrocode}
+\newcommand*{\@numberstringMdanish}[2]{%
+  \let\@unitstring=\@@unitstringdanish
+  \let\@teenstring=\@@teenstringdanish
+  \let\@tenstring=\@@tenstringdanish
+  \def\@hundred{hundred}\def\@thousand{thousand}%
+  \def\@andname{and}%
+  \@@numberstringdanish{#1}{#2}%
+}%
+\global\let\@numberstringMdanish\@numberstringMdanish
+%    \end{macrocode}
+% There is no gender in danish, so make feminine and neuter the
+% same
+% as the masculine.
+%    \begin{macrocode}
+\global\let\@numberstringFdanish=\@numberstringMdanish
+\global\let\@numberstringNdanish=\@numberstringMdanish
+%    \end{macrocode}
+% This version makes the first letter of each word an uppercase
+% character (except ``and''). The second argument must be a control 
+% sequence.
+%    \begin{macrocode}
+\newcommand*\@NumberstringMdanish[2]{%
+  \let\@unitstring=\@@Unitstringdanish
+  \let\@teenstring=\@@Teenstringdanish
+  \let\@tenstring=\@@Tenstringdanish
+  \def\@hundred{Hundred}\def\@thousand{Tusind}%
+  \def\@andname{og}%
+  \@@numberstringdanish{#1}{#2}%
+}%
+\global\let\@NumberstringMdanish\@NumberstringMdanish
+%    \end{macrocode}
+% There is no gender in danish, so make feminine and neuter the
+% same
+% as the masculine.
+%    \begin{macrocode}
+\global\let\@NumberstringFdanish=\@NumberstringMdanish
+\global\let\@NumberstringNdanish=\@NumberstringMdanish
+%    \end{macrocode}
+% Define a macro that produces an ordinal as a string. Again, break
+% it up into units, teens and tens. First the units:
+%    \begin{macrocode}
+\newcommand*\@@unitthstringdanish[1]{%
+  \ifcase#1\relax
+    nulte%
+    \or første%
+    \or anden%
+    \or tredje%
+    \or fjerde%
+    \or femte%
+    \or sjette%
+    \or syvende%
+    \or ottende%
+    \or niende%
+  \fi
+}%
+\global\let\@@unitthstringdanish\@@unitthstringdanish
+%    \end{macrocode}
+% Next the tens:
+%    \begin{macrocode}
+\newcommand*\@@tenthstringdanish[1]{%
+  \ifcase#1\relax
+    \or tiende%
+    \or tyvende%
+    \or tredivte%
+    \or fyrretyvende%
+    \or halvtredsindstyve%
+    \or tresindstyvende%
+    \or halvfjerdsindstyvende%
+    \or firsindstyvende%
+    \or halvfemsindstyvende%
+  \fi
+}%
+\global\let\@@tenthstringdanish\@@tenthstringdanish
+%    \end{macrocode}
+% The teens:
+%    \begin{macrocode}
+\newcommand*\@@teenthstringdanish[1]{%
+  \ifcase#1\relax
+    tiende%
+    \or ellevte%
+    \or tolvte%
+    \or trettende%
+    \or fjortende%
+    \or femtende%
+    \or sekstende%
+    \or syttende%
+    \or attende%
+    \or nittende%
+  \fi
+}%
+\global\let\@@teenthstringdanish\@@teenthstringdanish
+%    \end{macrocode}
+% As before, but with the first letter in upper case. The units:
+%    \begin{macrocode}
+\newcommand*\@@Unitthstringdanish[1]{%
+  \ifcase#1\relax
+    Nulte%
+    \or Første%
+    \or Anden%
+    \or Tredje%
+    \or Fjerde%
+    \or Femte%
+    \or Sjette%
+    \or Syvende%
+    \or Ottende%
+    \or Niende%
+  \fi
+}%
+\global\let\@@Unitthstringdanish\@@Unitthstringdanish
+%    \end{macrocode}
+% The tens:
+%    \begin{macrocode}
+\newcommand*\@@Tenthstringdanish[1]{%
+  \ifcase#1\relax
+    \or Tiende%
+    \or Tyvende%
+    \or Tredivte%
+    \or Fyrretyvende%
+    \or Halvtredsindstyve%
+    \or Tresindstyvende%
+    \or Halvfjerdsindstyvende%
+    \or Firsindstyvende%
+    \or Halvfemsindstyvende%
+  \fi
+}%
+\global\let\@@Tenthstringdanish\@@Tenthstringdanish
+%    \end{macrocode}
+% The teens:
+%    \begin{macrocode}
+\newcommand*\@@Teenthstringdanish[1]{%
+  \ifcase#1\relax
+    Tiende%
+    \or Ellevte%
+    \or Tolvte%
+    \or Trettende%
+    \or Fjortende%
+    \or Femtende%
+    \or Sekstende%
+    \or Syttende%
+    \or Attende%
+    \or Nittende%
+  \fi
+}%
+\global\let\@@Teenthstringdanish\@@Teenthstringdanish
+%    \end{macrocode}
+% Again, as from version 1.09, this has been changed to take two
+% arguments, where the second argument is a control sequence.
+% The resulting text is stored in the control sequence, and nothing
+% is displayed.
+%    \begin{macrocode}
+\newcommand*\@@ordinalstringdanish[2]{%
+\@strctr=#1\relax
+\ifnum#1>99999
+\PackageError{fmtcount}{Out of range}%
+{This macro only works for values less than 100000 (value given: \number\@strctr)}%
+\else
+\ifnum#1<0
+\PackageError{fmtcount}{Negative numbers not permitted}%
+{This macro does not work for negative numbers, however
+you can try typing "minus" first, and then pass the modulus of
+this number}%
+\fi
+\def#2{}%
+\fi
+\@strctr=#1\relax \divide\@strctr by 1000\relax
+\ifnum\@strctr>9\relax
+%    \end{macrocode}
+% \#1 is greater or equal to 10000
+%    \begin{macrocode}
+  \divide\@strctr by 10
+  \ifnum\@strctr>1\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\@tenstring{\@strctr}}%
+    \@strctr=#1\relax
+    \divide\@strctr by 1000\relax
+    \@FCmodulo{\@strctr}{10}%
+    \ifnum\@strctr>0\relax
+      \let\@@fc@ordstr#2\relax
+      \edef#2{\@@fc@ordstr-\@unitstring{\@strctr}}%
+    \fi
+  \else
+    \@strctr=#1\relax \divide\@strctr by 1000\relax
+    \@FCmodulo{\@strctr}{10}%
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\@teenstring{\@strctr}}%
+  \fi
+  \@strctr=#1\relax \@FCmodulo{\@strctr}{1000}%
+  \ifnum\@strctr=0\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\ \@thousandth}%
+  \else
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\ \@thousand}%
+  \fi
+\else
+  \ifnum\@strctr>0\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\@unitstring{\@strctr}}%
+    \@strctr=#1\relax \@FCmodulo{\@strctr}{1000}%
+    \let\@@fc@ordstr#2\relax
+    \ifnum\@strctr=0\relax
+      \edef#2{\@@fc@ordstr\ \@thousandth}%
+    \else
+      \edef#2{\@@fc@ordstr\ \@thousand}%
+    \fi
+  \fi
+\fi
+\@strctr=#1\relax \@FCmodulo{\@strctr}{1000}%
+\divide\@strctr by 100
+\ifnum\@strctr>0\relax
+  \ifnum#1>1000\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\ }%
+  \fi
+  \let\@@fc@ordstr#2\relax
+  \edef#2{\@@fc@ordstr\@unitstring{\@strctr}}%
+  \@strctr=#1\relax \@FCmodulo{\@strctr}{100}%
+  \let\@@fc@ordstr#2\relax
+  \ifnum\@strctr=0\relax
+    \edef#2{\@@fc@ordstr\ \@hundredth}%
+  \else
+    \edef#2{\@@fc@ordstr\ \@hundred}%
+  \fi
+\fi
+\@strctr=#1\relax \@FCmodulo{\@strctr}{100}%
+\ifnum#1>100\relax
+  \ifnum\@strctr>0\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\ \@andname\ }%
+  \fi
+\fi
+\ifnum\@strctr>19\relax
+  \@tmpstrctr=\@strctr
+  \divide\@strctr by 10\relax
+  \@FCmodulo{\@tmpstrctr}{10}%
+  \let\@@fc@ordstr#2\relax
+  \ifnum\@tmpstrctr=0\relax
+    \edef#2{\@@fc@ordstr\@tenthstring{\@strctr}}%
+  \else
+    \edef#2{\@@fc@ordstr\@tenstring{\@strctr}}%
+  \fi
+  \@strctr=#1\relax \@FCmodulo{\@strctr}{10}%
+  \ifnum\@strctr>0\relax
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr-\@unitthstring{\@strctr}}%
+  \fi
+\else
+  \ifnum\@strctr<10\relax
+    \ifnum\@strctr=0\relax
+      \ifnum#1<100\relax
+        \let\@@fc@ordstr#2\relax
+        \edef#2{\@@fc@ordstr\@unitthstring{\@strctr}}%
+      \fi
+    \else
+      \let\@@fc@ordstr#2\relax
+      \edef#2{\@@fc@ordstr\@unitthstring{\@strctr}}%
+    \fi
+  \else
+    \@FCmodulo{\@strctr}{10}%
+    \let\@@fc@ordstr#2\relax
+    \edef#2{\@@fc@ordstr\@teenthstring{\@strctr}}%
+  \fi
+\fi
+}%
+\global\let\@@ordinalstringdanish\@@ordinalstringdanish
+%    \end{macrocode}
+% All lower case version. Again, the second argument must be a
+% control sequence in which the resulting text is stored.
+%    \begin{macrocode}
+\newcommand*{\@ordinalstringMdanish}[2]{%
+  \let\@unitthstring=\@@unitthstringdanish
+  \let\@teenthstring=\@@teenthstringdanish
+  \let\@tenthstring=\@@tenthstringdanish
+  \let\@unitstring=\@@unitstringdanish
+  \let\@teenstring=\@@teenstringdanish
+  \let\@tenstring=\@@tenstringdanish
+  \def\@andname{and}%
+  \def\@hundred{hundred}\def\@thousand{thousand}%
+  \def\@hundredth{hundredth}\def\@thousandth{thousandth}%
+  \@@ordinalstringdanish{#1}{#2}%
+}%
+\global\let\@ordinalstringMdanish\@ordinalstringMdanish
+%    \end{macrocode}
+% No gender in danish, so make feminine and neuter same as
+% masculine:
+%    \begin{macrocode}
+\global\let\@ordinalstringFdanish=\@ordinalstringMdanish
+\global\let\@ordinalstringNdanish=\@ordinalstringMdanish
+%    \end{macrocode}
+% First letter of each word in upper case:
+%    \begin{macrocode}
+\newcommand*{\@OrdinalstringMdanish}[2]{%
+  \let\@unitthstring=\@@Unitthstringdanish
+  \let\@teenthstring=\@@Teenthstringdanish
+  \let\@tenthstring=\@@Tenthstringdanish
+  \let\@unitstring=\@@Unitstringdanish
+  \let\@teenstring=\@@Teenstringdanish
+  \let\@tenstring=\@@Tenstringdanish
+  \def\@andname{and}%
+  \def\@hundred{Hundred}\def\@thousand{Thousand}%
+  \def\@hundredth{Hundredth}\def\@thousandth{Thousandth}%
+  \@@ordinalstringdanish{#1}{#2}%
+}%
+\global\let\@OrdinalstringMdanish\@OrdinalstringMdanish
+%    \end{macrocode}
+% No gender in danish, so make feminine and neuter same as
+% masculine:
+%    \begin{macrocode}
+\global\let\@OrdinalstringFdanish=\@OrdinalstringMdanish
+\global\let\@OrdinalstringNdanish=\@OrdinalstringMdanish
+%    \end{macrocode}
+\iffalse Local variables: \fi
+\iffalse mode: docTeX     \fi
+\iffalse End:             \fi
